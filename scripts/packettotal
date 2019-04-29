@@ -89,7 +89,9 @@ def _output_binary_response(response: requests.Response, pcap_id: str):
 
 
 def _parse_cmdline():
-    parser = argparse.ArgumentParser(description='Migrate PacketTotal clusters.')
+    parser = argparse.ArgumentParser(
+        description='A simple commandline utility for interacting with the PacketTotal API.'
+    )
     parser.add_argument('mode', metavar='mode', type=str,
                         help='The mode to invoke '
                              '[ analyze|search|deep_search_create|deep_search_get|pcap_info|pcap_analysis|'
@@ -110,8 +112,11 @@ def _parse_cmdline():
 
 
 def main():
-    api = get_api()
+
     args = _parse_cmdline()
+    if '-h' in sys.argv or '--help' in sys.argv:
+        return
+    api = get_api()
     if args.mode == 'analyze':
         print('Not yet supported', file=sys.stderr)
     if args.mode == 'search':
