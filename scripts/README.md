@@ -1,4 +1,4 @@
-```python
+```python3
 
 usage: packettotal [-h] [--query QUERY] [--pcap-id PCAP_ID]
                    [--search-id SEARCH_ID] [--output OUTPUT]
