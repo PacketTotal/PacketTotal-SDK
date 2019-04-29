@@ -1,0 +1,281 @@
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="utf-8" />
+    <title>PacketTotal API Module &#8212; packettotal_sdk 04/30/2019 documentation</title>
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/language_data.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="packettotal-api-module">
+<h1>PacketTotal API Module<a class="headerlink" href="#packettotal-api-module" title="Permalink to this headline">¶</a></h1>
+<p>This module provides a basic interface for working with the PacketTotal API.</p>
+<span class="target" id="module-packettotal_sdk.packettotal_api"></span><dl class="class">
+<dt id="packettotal_sdk.packettotal_api.PacketTotalApi">
+<em class="property">class </em><code class="descclassname">packettotal_sdk.packettotal_api.</code><code class="descname">PacketTotalApi</code><span class="sig-paren">(</span><em>api_key: str</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/packettotal_sdk/packettotal_api.html#PacketTotalApi"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#packettotal_sdk.packettotal_api.PacketTotalApi" title="Permalink to this definition">¶</a></dt>
+<dd><p>Client that provides search/analysis capabilities</p>
+<p>Signup here: <a class="reference external" href="https://www.packettotal.com/api.html">https://www.packettotal.com/api.html</a></p>
+<dl class="method">
+<dt id="packettotal_sdk.packettotal_api.PacketTotalApi.analyze">
+<code class="descname">analyze</code><span class="sig-paren">(</span><em>pcap_file_obj: _io.BytesIO</em>, <em>pcap_name=None</em><span class="sig-paren">)</span> &#x2192; requests.models.Response<a class="reference internal" href="../_modules/packettotal_sdk/packettotal_api.html#PacketTotalApi.analyze"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#packettotal_sdk.packettotal_api.PacketTotalApi.analyze" title="Permalink to this definition">¶</a></dt>
+<dd><p>Publically analyze a PCAP file</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pcap_file_obj</strong> – A file like object that provides a .read() interface (E.G open(‘path_to_pcap.pcap, ‘rb’) )</p></li>
+<li><p><strong>pcap_name</strong> – The optional name of the pcap file, if none is given the md5 hash of the PCAP is used</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A request.Response instance, containing information such as where the finished analysis can be found</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="packettotal_sdk.packettotal_api.PacketTotalApi.deep_search_create">
+<code class="descname">deep_search_create</code><span class="sig-paren">(</span><em>query: str</em><span class="sig-paren">)</span> &#x2192; requests.models.Response<a class="reference internal" href="../_modules/packettotal_sdk/packettotal_api.html#PacketTotalApi.deep_search_create"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#packettotal_sdk.packettotal_api.PacketTotalApi.deep_search_create" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a new deep search task. Search for a term or with a Lucene query.
+Deep searches run longer and can return more results than a normal search.
+The are executed asyncronously, and results must be fetched later using the resulting search_id
+<a class="reference external" href="https://www.packettotal.com/api-docs/#/search/post_search_deep">https://www.packettotal.com/api-docs/#/search/post_search_deep</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>query</strong> – A search term, such as an IP address or file hash.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A request.Response instance, containing the corresponding search_id, which can be used to retrieve</p>
+</dd>
+</dl>
+<p>results at a later point</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="packettotal_sdk.packettotal_api.PacketTotalApi.deep_search_get">
+<code class="descname">deep_search_get</code><span class="sig-paren">(</span><em>search_id: str</em>, <em>pretty=False</em><span class="sig-paren">)</span> &#x2192; requests.models.Response<a class="reference internal" href="../_modules/packettotal_sdk/packettotal_api.html#PacketTotalApi.deep_search_get"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#packettotal_sdk.packettotal_api.PacketTotalApi.deep_search_get" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the results from a deep search task.
+<a class="reference external" href="https://www.packettotal.com/api-docs/#/search/get_search_deep_results__search_id_">https://www.packettotal.com/api-docs/#/search/get_search_deep_results__search_id_</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>search_id</strong> – An id corresponding to the search you previously created.</p></li>
+<li><p><strong>pretty</strong> – True, if you wish the response.text to be human readable</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A request.Response instance, containing the results of the initial deep search query</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="packettotal_sdk.packettotal_api.PacketTotalApi.pcap_analysis">
+<code class="descname">pcap_analysis</code><span class="sig-paren">(</span><em>pcap_md5: str</em><span class="sig-paren">)</span> &#x2192; requests.models.Response<a class="reference internal" href="../_modules/packettotal_sdk/packettotal_api.html#PacketTotalApi.pcap_analysis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#packettotal_sdk.packettotal_api.PacketTotalApi.pcap_analysis" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a detailed report of PCAP traffic, carved files, signatures, and top-talkers.
+<a class="reference external" href="https://www.packettotal.com/api-docs/#/pcaps/get_pcaps__pcap_id__analysis">https://www.packettotal.com/api-docs/#/pcaps/get_pcaps__pcap_id__analysis</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>pcap_md5</strong> – An md5 hash corresponding to the PCAP file submission on PacketTotal.com</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A request.Response instance, containing more detailed information about the contents of a PCAP file</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="packettotal_sdk.packettotal_api.PacketTotalApi.pcap_download">
+<code class="descname">pcap_download</code><span class="sig-paren">(</span><em>pcap_md5: str</em><span class="sig-paren">)</span> &#x2192; requests.models.Response<a class="reference internal" href="../_modules/packettotal_sdk/packettotal_api.html#PacketTotalApi.pcap_download"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#packettotal_sdk.packettotal_api.PacketTotalApi.pcap_download" title="Permalink to this definition">¶</a></dt>
+<dd><p>Download a PCAP analysis archive. The result is a zip archive containing the PCAP itself, CSVs representing
+various analysis results, and all carved files.
+<a class="reference external" href="https://www.packettotal.com/api-docs/#/pcaps/get_pcaps__pcap_id__download">https://www.packettotal.com/api-docs/#/pcaps/get_pcaps__pcap_id__download</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>pcap_md5</strong> – An md5 hash corresponding to the PCAP file submission on PacketTotal.com</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A request.Response instance, containing the download zip archive</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="packettotal_sdk.packettotal_api.PacketTotalApi.pcap_info">
+<code class="descname">pcap_info</code><span class="sig-paren">(</span><em>pcap_md5: str</em><span class="sig-paren">)</span> &#x2192; requests.models.Response<a class="reference internal" href="../_modules/packettotal_sdk/packettotal_api.html#PacketTotalApi.pcap_info"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#packettotal_sdk.packettotal_api.PacketTotalApi.pcap_info" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get high-level information about a specific PCAP file.
+<a class="reference external" href="https://www.packettotal.com/api-docs/#/pcaps/get_pcaps__pcap_id_">https://www.packettotal.com/api-docs/#/pcaps/get_pcaps__pcap_id_</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>pcap_md5</strong> – An md5 hash corresponding to the PCAP file submission on PacketTotal.com</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A request.Response instance, containing high-level metadata about a PCAP submission</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="packettotal_sdk.packettotal_api.PacketTotalApi.pcap_similar">
+<code class="descname">pcap_similar</code><span class="sig-paren">(</span><em>pcap_md5: str</em>, <em>intensity='low'</em>, <em>weighting_mode='behavior'</em>, <em>prioritize_uncommon_fields=False</em>, <em>pretty=False</em><span class="sig-paren">)</span> &#x2192; requests.models.Response<a class="reference internal" href="../_modules/packettotal_sdk/packettotal_api.html#PacketTotalApi.pcap_similar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#packettotal_sdk.packettotal_api.PacketTotalApi.pcap_similar" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a similarity graph relative to the current PCAP file.
+<a class="reference external" href="https://www.packettotal.com/api-docs/#/pcaps/get_pcaps__pcap_id__similar">https://www.packettotal.com/api-docs/#/pcaps/get_pcaps__pcap_id__similar</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pcap_md5</strong> – An md5 hash corresponding to the PCAP file submission on PacketTotal.com</p></li>
+<li><p><strong>intensity</strong> – [minimal|low|medium|high] The scope of the search, basically translates to the maximum number</p></li>
+</ul>
+</dd>
+</dl>
+<p>of aggregations to exhaust.
+:param weighting_mode: [behavior|content] Weight search results either based on their similarity to the
+behaviors exhibited or contents contained within the current PCAP file.
+:param prioritize_uncommon_fields: By default, the most common values are used to seed the initial similarity
+search. Enabling this parameter, seeds the initial search with the least common values instead.
+:param pretty: True, if you wish the response.text to be human readable
+:return: A request.Response instance, containing a graph of similar pcaps with matched terms</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="packettotal_sdk.packettotal_api.PacketTotalApi.search">
+<code class="descname">search</code><span class="sig-paren">(</span><em>query: str</em>, <em>pretty=False</em><span class="sig-paren">)</span> &#x2192; requests.models.Response<a class="reference internal" href="../_modules/packettotal_sdk/packettotal_api.html#PacketTotalApi.search"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#packettotal_sdk.packettotal_api.PacketTotalApi.search" title="Permalink to this definition">¶</a></dt>
+<dd><p>Search with term or with a valid Lucene query.
+<a class="reference external" href="https://www.packettotal.com/api-docs/#/search/get_search">https://www.packettotal.com/api-docs/#/search/get_search</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>query</strong> – A search term, such as an IP address or file hash.</p></li>
+<li><p><strong>pretty</strong> – True, if you wish the response.text to be human readable</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A request.Response instance, containing the results of the search query</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="packettotal_sdk.packettotal_api.PacketTotalApi.set_api_key">
+<code class="descname">set_api_key</code><span class="sig-paren">(</span><em>api_key</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/packettotal_sdk/packettotal_api.html#PacketTotalApi.set_api_key"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#packettotal_sdk.packettotal_api.PacketTotalApi.set_api_key" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the API key</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>api_key</strong> – An API authentication token</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="packettotal_sdk.packettotal_api.PacketTotalApi.set_version">
+<code class="descname">set_version</code><span class="sig-paren">(</span><em>version: str</em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/packettotal_sdk/packettotal_api.html#PacketTotalApi.set_version"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#packettotal_sdk.packettotal_api.PacketTotalApi.set_version" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the API version</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>version</strong> – The version prefix for the API (E.G v1)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="packettotal_sdk.packettotal_api.PacketTotalApi.usage">
+<code class="descname">usage</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; requests.models.Response<a class="reference internal" href="../_modules/packettotal_sdk/packettotal_api.html#PacketTotalApi.usage"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#packettotal_sdk.packettotal_api.PacketTotalApi.usage" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieve API usage and subscription plan information.
+<a class="reference external" href="https://www.packettotal.com/api-docs/#/usage/get_usage">https://www.packettotal.com/api-docs/#/usage/get_usage</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A request.Response instance, containing information about requests made, and your current subscription</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">packettotal_sdk</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2019, PacketTotal LLC.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 2.0.1</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="../_sources/packettotal_sdk/packettotal_sdk.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
