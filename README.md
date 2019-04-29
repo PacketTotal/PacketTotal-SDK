@@ -69,3 +69,9 @@ response = api.search('google.com')
 print(response.status_code, response.json())
 
 ```
+
+## Documentation
+
+You can build the documentation by running `make html` from the root directory.
+
+The API documentation is available [here](https://www.packettotal.com/api-docs/)
