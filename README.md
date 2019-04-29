@@ -72,6 +72,13 @@ print(response.status_code, response.json())
 
 ## Documentation
 
-You can build the documentation by running `make html` from the root directory.
+Static HTML version of the SDK's API Module can be found [here](https://packettotal.github.io/PacketTotal-SDK/packettotal_sdk/packettotal_sdk.html#module-packettotal_sdk.packettotal_api).
 
-The API documentation is available [here](https://www.packettotal.com/api-docs/)
+The official REST API documentation is available [here](https://www.packettotal.com/api-docs/)
+
+Or ...
+
+Build Sphinx Docs with search by following the seps below:
+
+1. From the root directory run `make html` or `make.bat` if on Windows.
+2. Navigate to `_build/html/index.html` in a web-browser.
