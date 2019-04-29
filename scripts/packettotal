@@ -1,0 +1,140 @@
+#! /usr/bin/env python
+
+import sys
+import getpass
+import argparse
+
+import requests
+from packettotal_sdk import packettotal_api
+
+
+def get_api() -> packettotal_api.PacketTotalApi:
+    """
+    Gets an authenticated API instance either by prompting the user or retrieving credential from disk
+    :return: Returns a validated packettotal_api.PacketTotalApi instance
+    """
+    try:
+        with open('.pt_api_key', 'r') as f:
+            api = packettotal_api.PacketTotalApi(f.read())
+            if not validate_api_key(api):
+                api = prompt_api_token()
+    except FileNotFoundError:
+        api = prompt_api_token()
+    return api
+
+
+def prompt_api_token() -> packettotal_api.PacketTotalApi:
+    """
+    Prompts the user to enter their API key, tests the validity of the key, and if valid caches it to disk
+
+    :return: Returns a validated packettotal_api.PacketTotalApi instance
+    """
+    valid = False
+    api = None
+    while not valid:
+        api_key = getpass.getpass('Enter your API key: ', stream=None)
+        api = packettotal_api.PacketTotalApi(api_key)
+        if validate_api_key(api):
+            with open('.pt_api_key', 'w') as f:
+                f.write(api_key)
+            valid = True
+    return api
+
+
+def validate_api_key(api: packettotal_api.PacketTotalApi) -> bool:
+    """
+    Determines whether an API key is valid
+
+    :param api: An unvalidated packettotal_api.PacketTotalApi instance
+    :return: True if api key is valid
+    """
+    valid = False
+    if api.usage().status_code == 200:
+        valid = True
+    return valid
+
+
+def _output_text_response(response: requests.Response, output_file=None) -> None:
+    """
+    Write a text response to console or file
+
+    :param response: A request.Response object containing a populated .text variable
+    :param output_file: The path to an optional output file
+    """
+    if response.status_code != 200:
+        print('An error occurred [{}]'.format(response.status_code), file=sys.stderr)
+        print(response.text, file=sys.stderr)
+    elif not output_file:
+        print(response.text)
+    else:
+        print('Results written to: {}'.format(output_file))
+        with open(output_file, 'w') as f:
+            f.write(response.text)
+
+
+def _output_binary_response(response: requests.Response, pcap_id: str):
+    """
+    Write a binary response to a zip file, or display an error
+
+    :param response: A request.Response instance containing a populated .content variable
+    :param pcap_id: An md5 hash corresponding to the PCAP file submission on PacketTotal.com
+    """
+    if response.status_code != 200:
+        print('An error occurred [{}]'.format(response.status_code), file=sys.stderr)
+        print(response.text, file=sys.stderr)
+    else:
+        print('Results written to: {}'.format(pcap_id + '.zip'))
+        with open(pcap_id + '.zip', 'wb') as f:
+            f.write(response.content)
+
+
+def _parse_cmdline():
+    parser = argparse.ArgumentParser(description='Migrate PacketTotal clusters.')
+    parser.add_argument('mode', metavar='mode', type=str,
+                        help='The mode to invoke '
+                             '[ analyze|search|deep_search_create|deep_search_get|pcap_info|pcap_analysis|'
+                             'pcap_download|pcap_similar ]')
+    parser.add_argument(
+        '--query', dest='query', help='A search query',
+        required='search' in sys.argv or 'deep_search_create' in sys.argv)
+    parser.add_argument(
+        '--pcap-id', dest='pcap_id', help='The MD5 hash of some PCAP file.',
+        required='pcap_info' in sys.argv or 'pcap_info' in sys.argv or 'pcap_download' in sys.argv)
+    parser.add_argument(
+        '--search-id', dest='search_id', help='The search identifier corresponding to a deep search task',
+        required='deep_search_get' in sys.argv)
+    parser.add_argument(
+        '--output', dest='output', help='A path to an output file, defaulted to standard out if not included.')
+    args = parser.parse_args()
+    return args
+
+
+def main():
+    api = get_api()
+    args = _parse_cmdline()
+    if args.mode == 'analyze':
+        print('Not yet supported', file=sys.stderr)
+    if args.mode == 'search':
+        _output_text_response(api.search(args.query), args.output)
+    elif args.mode == 'deep_search_create':
+        _output_text_response(api.deep_search_create(args.query), args.output)
+    elif args.mode == 'deep_search_get':
+        _output_text_response(api.deep_search_get(args.search_id), args.output)
+    elif args.mode == 'pcap_info':
+        _output_text_response(api.pcap_info(args.pcap_id), args.output)
+    elif args.mode == 'pcap_analysis':
+        _output_text_response(api.pcap_analysis(args.pcap_id), args.output)
+    elif args.mode == 'pcap_download':
+        _output_binary_response(api.pcap_download(args.pcap_id), args.pcap_id)
+    elif args.mode == 'pcap_similar':
+        _output_text_response(api.pcap_similar(args.pcap_id), args.output)
+    elif args.mode == 'usage':
+        _output_text_response(api.usage(), args.output)
+    else:
+        print('Invalid mode. Valid modes are: [{}]'.format('analyze|search|deep_search_create|deep_search_get|'
+                                                           'pcap_info|pcap_analysis|pcap_download|pcap_similar'),
+              file=sys.stderr)
+
+
+if __name__ == '__main__':
+    main()
