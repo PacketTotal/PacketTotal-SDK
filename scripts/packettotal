@@ -61,7 +61,7 @@ def _output_text_response(response: requests.Response, output_file=None) -> None
     :param response: A request.Response object containing a populated .text variable
     :param output_file: The path to an optional output file
     """
-    if response.status_code != 200:
+    if response.status_code not in [200, 202]:
         print('An error occurred [{}]'.format(response.status_code), file=sys.stderr)
         print(response.text, file=sys.stderr)
     elif not output_file:
@@ -79,9 +79,11 @@ def _output_binary_response(response: requests.Response, pcap_id: str):
     :param response: A request.Response instance containing a populated .content variable
     :param pcap_id: An md5 hash corresponding to the PCAP file submission on PacketTotal.com
     """
-    if response.status_code != 200:
+    if response.status_code not in [200, 301]:
         print('An error occurred [{}]'.format(response.status_code), file=sys.stderr)
         print(response.text, file=sys.stderr)
+    elif response.status_code == 202:
+        print('Download job still processing, try again in a few seconds.')
     else:
         print('Results written to: {}'.format(pcap_id + '.zip'))
         with open(pcap_id + '.zip', 'wb') as f:
