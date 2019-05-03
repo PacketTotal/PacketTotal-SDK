@@ -10,7 +10,7 @@ A simple commandline utility for interacting with the PacketTotal API.
 
 positional arguments:
   mode                  The mode to invoke [ analyze|search|deep_search_create
-                        |deep_search_get|pcap_info|analysis|download|similar ]
+                        |deep_search_get|info|analysis|download|similar ]
 
 optional arguments:
   -h, --help            show this help message and exit
