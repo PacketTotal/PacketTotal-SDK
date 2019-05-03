@@ -26,9 +26,9 @@ export PACKETTOTAL_API_VERSION_STRING="v1"
 
 ## Basic Usage
 
-The SDK ships with a library for interacting with the PacketTotal API, as well as a script to provide easy access to this library.
+The SDK ships with a library for interacting with the PacketTotal API, as well as a [script](/scripts) to provide easy access to this library.
 
-### Retrieving Usage Information
+### Retrieving API Usage Information
 
 ##### Via packettotal commandline
 
@@ -44,6 +44,27 @@ from packettotal_sdk import packettotal_api
 api = packettotal_api.PacketTotalApi('my-api-key')
 
 response = api.usage()
+
+print(response.status_code, response.json())
+
+```
+
+### Analyze a PCAP file
+
+##### Via packettotal commandline
+
+```bash
+packettotal analyze --path /path/to/my/pcap.pcap --name my-publically-shared-pcap.pcap
+```
+
+
+##### Via packettotal_api module
+```python
+from packettotal_sdk import packettotal_api
+
+api = packettotal_api.PacketTotalApi('my-api-key')
+
+response = api.analyze(open('/path/to/my/pcap.pcap', 'rb'), pcap_name='my-publically-shared-pcap.pcap')
 
 print(response.status_code, response.json())
 

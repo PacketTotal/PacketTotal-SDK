@@ -1,6 +1,6 @@
-import io
 import os
 import json
+import typing
 import base64
 import requests
 
@@ -29,19 +29,19 @@ class PacketTotalApi:
         if PT_API_VERSION_STRING:
             self.version = PT_API_VERSION_STRING
 
-    def analyze(self, pcap_file_obj: io.BytesIO, pcap_name=None) -> requests.Response:
+    def analyze(self, pcap_file_obj: typing.BinaryIO, pcap_name=None, pcap_sources=None) -> requests.Response:
         """
         Publically analyze a PCAP file
 
         :param pcap_file_obj: A file like object that provides a .read() interface (E.G open('path_to_pcap.pcap, 'rb') )
         :param pcap_name: The optional name of the pcap file, if none is given the md5 hash of the PCAP is used
+        :param pcap_sources: The optional list of URLs referencing making reference to the PCAP file
         :return: A request.Response instance, containing information such as where the finished analysis can be found
         """
         pcap_base64 = base64.b64encode(pcap_file_obj.read())
         pcap_base64 = pcap_base64.decode('utf-8')
 
         self.headers['Content-Type'] = 'application/json'
-        print(self.headers)
         body = {
             'pcap_base64': pcap_base64
         }
@@ -49,12 +49,16 @@ class PacketTotalApi:
         if pcap_name:
             body['pcap_name'] = pcap_name
 
+        if isinstance(pcap_sources, list):
+            print(type(pcap_sources), pcap_sources)
+            body['sources'] = pcap_sources
+
         response = requests.post(
-            self.base_url + self.version + '/pcaps/analyze',
+            self.base_url + self.version + '/analyze/base64',
             headers=self.headers,
             data=json.dumps(body)
         )
-        return response.text
+        return response
 
     def search(self, query: str, pretty=False) -> requests.Response:
         """
