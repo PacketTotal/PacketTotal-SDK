@@ -37,16 +37,17 @@
 <dt id="packettotal_sdk.packettotal_api.PacketTotalApi">
 <em class="property">class </em><code class="descclassname">packettotal_sdk.packettotal_api.</code><code class="descname">PacketTotalApi</code><span class="sig-paren">(</span><em>api_key: str</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/packettotal_sdk/packettotal_api.html#PacketTotalApi"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#packettotal_sdk.packettotal_api.PacketTotalApi" title="Permalink to this definition">¶</a></dt>
 <dd><p>Client that provides search/analysis capabilities</p>
-<p>Signup here: <a class="reference external" href="https://www.packettotal.com/api.html">https://www.packettotal.com/api.html</a></p>
+<p>Sign up here: <a class="reference external" href="https://www.packettotal.com/api.html">https://www.packettotal.com/api.html</a></p>
 <dl class="method">
 <dt id="packettotal_sdk.packettotal_api.PacketTotalApi.analyze">
-<code class="descname">analyze</code><span class="sig-paren">(</span><em>pcap_file_obj: _io.BytesIO</em>, <em>pcap_name=None</em><span class="sig-paren">)</span> &#x2192; requests.models.Response<a class="reference internal" href="../_modules/packettotal_sdk/packettotal_api.html#PacketTotalApi.analyze"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#packettotal_sdk.packettotal_api.PacketTotalApi.analyze" title="Permalink to this definition">¶</a></dt>
-<dd><p>Publically analyze a PCAP file</p>
+<code class="descname">analyze</code><span class="sig-paren">(</span><em>pcap_file_obj: BinaryIO</em>, <em>pcap_name=None</em>, <em>pcap_sources=None</em><span class="sig-paren">)</span> &#x2192; requests.models.Response<a class="reference internal" href="../_modules/packettotal_sdk/packettotal_api.html#PacketTotalApi.analyze"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#packettotal_sdk.packettotal_api.PacketTotalApi.analyze" title="Permalink to this definition">¶</a></dt>
+<dd><p>Publicly analyze a PCAP file</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>pcap_file_obj</strong> – A file like object that provides a .read() interface (E.G open(‘path_to_pcap.pcap, ‘rb’) )</p></li>
 <li><p><strong>pcap_name</strong> – The optional name of the pcap file, if none is given the md5 hash of the PCAP is used</p></li>
+<li><p><strong>pcap_sources</strong> – The optional list of URLs referencing making reference to the PCAP file</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>

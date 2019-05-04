@@ -31,9 +31,9 @@
           <div class="body" role="main">
             
   <h1>Source code for packettotal_sdk.packettotal_api</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">io</span>
-<span class="kn">import</span> <span class="nn">os</span>
+<span></span><span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">typing</span>
 <span class="kn">import</span> <span class="nn">base64</span>
 <span class="kn">import</span> <span class="nn">requests</span>
 
@@ -45,7 +45,7 @@
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Client that provides search/analysis capabilities</span>
 
-<span class="sd">    Signup here: https://www.packettotal.com/api.html</span>
+<span class="sd">    Sign up here: https://www.packettotal.com/api.html</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">api_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
@@ -62,19 +62,19 @@
         <span class="k">if</span> <span class="n">PT_API_VERSION_STRING</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">version</span> <span class="o">=</span> <span class="n">PT_API_VERSION_STRING</span>
 
-<div class="viewcode-block" id="PacketTotalApi.analyze"><a class="viewcode-back" href="../../packettotal_sdk/packettotal_sdk.html#packettotal_sdk.packettotal_api.PacketTotalApi.analyze">[docs]</a>    <span class="k">def</span> <span class="nf">analyze</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pcap_file_obj</span><span class="p">:</span> <span class="n">io</span><span class="o">.</span><span class="n">BytesIO</span><span class="p">,</span> <span class="n">pcap_name</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">requests</span><span class="o">.</span><span class="n">Response</span><span class="p">:</span>
+<div class="viewcode-block" id="PacketTotalApi.analyze"><a class="viewcode-back" href="../../packettotal_sdk/packettotal_sdk.html#packettotal_sdk.packettotal_api.PacketTotalApi.analyze">[docs]</a>    <span class="k">def</span> <span class="nf">analyze</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pcap_file_obj</span><span class="p">:</span> <span class="n">typing</span><span class="o">.</span><span class="n">BinaryIO</span><span class="p">,</span> <span class="n">pcap_name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">pcap_sources</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">requests</span><span class="o">.</span><span class="n">Response</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Publically analyze a PCAP file</span>
+<span class="sd">        Publicly analyze a PCAP file</span>
 
 <span class="sd">        :param pcap_file_obj: A file like object that provides a .read() interface (E.G open(&#39;path_to_pcap.pcap, &#39;rb&#39;) )</span>
 <span class="sd">        :param pcap_name: The optional name of the pcap file, if none is given the md5 hash of the PCAP is used</span>
+<span class="sd">        :param pcap_sources: The optional list of URLs referencing making reference to the PCAP file</span>
 <span class="sd">        :return: A request.Response instance, containing information such as where the finished analysis can be found</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">pcap_base64</span> <span class="o">=</span> <span class="n">base64</span><span class="o">.</span><span class="n">b64encode</span><span class="p">(</span><span class="n">pcap_file_obj</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
         <span class="n">pcap_base64</span> <span class="o">=</span> <span class="n">pcap_base64</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">headers</span><span class="p">[</span><span class="s1">&#39;Content-Type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;application/json&#39;</span>
-        <span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">headers</span><span class="p">)</span>
         <span class="n">body</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s1">&#39;pcap_base64&#39;</span><span class="p">:</span> <span class="n">pcap_base64</span>
         <span class="p">}</span>
@@ -82,12 +82,16 @@
         <span class="k">if</span> <span class="n">pcap_name</span><span class="p">:</span>
             <span class="n">body</span><span class="p">[</span><span class="s1">&#39;pcap_name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pcap_name</span>
 
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pcap_sources</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">pcap_sources</span><span class="p">),</span> <span class="n">pcap_sources</span><span class="p">)</span>
+            <span class="n">body</span><span class="p">[</span><span class="s1">&#39;sources&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pcap_sources</span>
+
         <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">base_url</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">version</span> <span class="o">+</span> <span class="s1">&#39;/pcaps/analyze&#39;</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">base_url</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">version</span> <span class="o">+</span> <span class="s1">&#39;/analyze/base64&#39;</span><span class="p">,</span>
             <span class="n">headers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">headers</span><span class="p">,</span>
             <span class="n">data</span><span class="o">=</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">body</span><span class="p">)</span>
         <span class="p">)</span>
-        <span class="k">return</span> <span class="n">response</span><span class="o">.</span><span class="n">text</span></div>
+        <span class="k">return</span> <span class="n">response</span></div>
 
 <div class="viewcode-block" id="PacketTotalApi.search"><a class="viewcode-back" href="../../packettotal_sdk/packettotal_sdk.html#packettotal_sdk.packettotal_api.PacketTotalApi.search">[docs]</a>    <span class="k">def</span> <span class="nf">search</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">query</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">pretty</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">requests</span><span class="o">.</span><span class="n">Response</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -145,21 +149,6 @@
 
         <span class="k">return</span> <span class="n">response</span><span class="o">.</span><span class="n">text</span></div>
 
-<div class="viewcode-block" id="PacketTotalApi.pcap_info"><a class="viewcode-back" href="../../packettotal_sdk/packettotal_sdk.html#packettotal_sdk.packettotal_api.PacketTotalApi.pcap_info">[docs]</a>    <span class="k">def</span> <span class="nf">pcap_info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pcap_md5</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">requests</span><span class="o">.</span><span class="n">Response</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Get high-level information about a specific PCAP file.</span>
-<span class="sd">        https://www.packettotal.com/api-docs/#/pcaps/get_pcaps__pcap_id_</span>
-
-<span class="sd">        :param pcap_md5: An md5 hash corresponding to the PCAP file submission on PacketTotal.com</span>
-<span class="sd">        :return: A request.Response instance, containing high-level metadata about a PCAP submission</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">base_url</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">version</span> <span class="o">+</span> <span class="s1">&#39;/pcaps/</span><span class="si">{0}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pcap_md5</span><span class="p">),</span>
-            <span class="n">headers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">headers</span>
-        <span class="p">)</span>
-
-        <span class="k">return</span> <span class="n">response</span></div>
-
 <div class="viewcode-block" id="PacketTotalApi.pcap_analysis"><a class="viewcode-back" href="../../packettotal_sdk/packettotal_sdk.html#packettotal_sdk.packettotal_api.PacketTotalApi.pcap_analysis">[docs]</a>    <span class="k">def</span> <span class="nf">pcap_analysis</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pcap_md5</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">requests</span><span class="o">.</span><span class="n">Response</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get a detailed report of PCAP traffic, carved files, signatures, and top-talkers.</span>
@@ -191,8 +180,23 @@
 
         <span class="k">return</span> <span class="n">response</span></div>
 
+<div class="viewcode-block" id="PacketTotalApi.pcap_info"><a class="viewcode-back" href="../../packettotal_sdk/packettotal_sdk.html#packettotal_sdk.packettotal_api.PacketTotalApi.pcap_info">[docs]</a>    <span class="k">def</span> <span class="nf">pcap_info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pcap_md5</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">requests</span><span class="o">.</span><span class="n">Response</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Get high-level information about a specific PCAP file.</span>
+<span class="sd">        https://www.packettotal.com/api-docs/#/pcaps/get_pcaps__pcap_id_</span>
+
+<span class="sd">        :param pcap_md5: An md5 hash corresponding to the PCAP file submission on PacketTotal.com</span>
+<span class="sd">        :return: A request.Response instance, containing high-level metadata about a PCAP submission</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">base_url</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">version</span> <span class="o">+</span> <span class="s1">&#39;/pcaps/</span><span class="si">{0}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pcap_md5</span><span class="p">),</span>
+            <span class="n">headers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">headers</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">response</span></div>
+
 <div class="viewcode-block" id="PacketTotalApi.pcap_similar"><a class="viewcode-back" href="../../packettotal_sdk/packettotal_sdk.html#packettotal_sdk.packettotal_api.PacketTotalApi.pcap_similar">[docs]</a>    <span class="k">def</span> <span class="nf">pcap_similar</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pcap_md5</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">intensity</span><span class="o">=</span><span class="s1">&#39;low&#39;</span><span class="p">,</span> <span class="n">weighting_mode</span><span class="o">=</span><span class="s1">&#39;behavior&#39;</span><span class="p">,</span>
-                <span class="n">prioritize_uncommon_fields</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">pretty</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">requests</span><span class="o">.</span><span class="n">Response</span><span class="p">:</span>
+                     <span class="n">prioritize_uncommon_fields</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">pretty</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">requests</span><span class="o">.</span><span class="n">Response</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Get a similarity graph relative to the current PCAP file.</span>
 <span class="sd">        https://www.packettotal.com/api-docs/#/pcaps/get_pcaps__pcap_id__similar</span>
