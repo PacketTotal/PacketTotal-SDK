@@ -24,9 +24,14 @@ export PACKETTOTAL_API_BASE_URL="https://api.packettotal.com/"
 export PACKETTOTAL_API_VERSION_STRING="v1"
 ```
 
+## Request an API key
+
+You can request an API key [here](https://packettotal.com/api.html).
+
 ## Basic Usage
 
 The SDK ships with a library for interacting with the PacketTotal API, as well as a [script](/scripts) to provide easy access to this library.
+
 
 ### Retrieving API Usage Information
 
