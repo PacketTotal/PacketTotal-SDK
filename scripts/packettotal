@@ -17,7 +17,7 @@ def _output_text_response(response: requests.Response, output_file=None) -> None
     :param output_file: The path to an optional output file
     """
     if response.status_code not in [200, 202]:
-        print('An error occurred [{}]'.format(response.status_code), file=sys.stderr)
+        print('An error occurred. [{}]'.format(response.status_code), file=sys.stderr)
         print(response.text, file=sys.stderr)
     elif response.status_code == 303:
         print('Redirect - {}'.format(response.headers.get('location')))
@@ -34,13 +34,13 @@ def _output_binary_response(response: requests.Response, pcap_id: str) -> None:
     Write a binary response to a zip file, or display an error
 
     :param response: A request.Response instance containing a populated .content variable
-    :param pcap_id: An md5 hash corresponding to the PCAP file submission on PacketTotal.com
+    :param pcap_id: An md5 hash corresponding to the pcap file submission on PacketTotal.com
     """
     if response.status_code not in [200, 301]:
-        print('An error occurred [{}]'.format(response.status_code), file=sys.stderr)
+        print('An error occurred. [{}]'.format(response.status_code), file=sys.stderr)
         print(response.text, file=sys.stderr)
     elif response.status_code == 202:
-        print('Download job still processing, try again in a few seconds.')
+        print('Download job still processing. Try again in a few seconds.')
     else:
         print('Results written to: {}'.format(pcap_id + '.zip'))
         with open(pcap_id + '.zip', 'wb') as f:
@@ -56,7 +56,7 @@ def _parse_cmdline() -> argparse.Namespace:
     optional arguments:
       -h, --help            show this help message and exit
       --query QUERY         A search query
-      --pcap-id PCAP_ID     The MD5 hash of some PCAP file.
+      --pcap-id PCAP_ID     The MD5 hash of some pcap file on PacketTotal.
       --search-id SEARCH_ID
                             The search identifier corresponding to a deep search
                             task
@@ -68,7 +68,7 @@ def _parse_cmdline() -> argparse.Namespace:
                             not included.
     """
     parser = argparse.ArgumentParser(
-        description='A simple commandline utility for interacting with the PacketTotal API.'
+        description='A simple command-line utility for interacting with the PacketTotal API.'
     )
     parser.add_argument('mode', metavar='mode', type=str,
                         help='The mode to invoke '
@@ -78,7 +78,7 @@ def _parse_cmdline() -> argparse.Namespace:
         '--query', dest='query', help='A search query',
         required='search' in sys.argv or 'deep_search' in sys.argv)
     parser.add_argument(
-        '--pcap-id', dest='pcap_id', help='The MD5 hash of some PCAP file.',
+        '--pcap-id', dest='pcap_id', help='The MD5 hash of the pcap on PacketTotal.',
         required='analysis' in sys.argv or 'download' in sys.argv or 'info' in sys.argv or 'similar' in sys.argv)
     parser.add_argument(
         '--search-id', dest='search_id', help='The search identifier corresponding to a deep search task',
@@ -91,7 +91,7 @@ def _parse_cmdline() -> argparse.Namespace:
     parser.add_argument('--sources', dest='pcap_sources', help='URLs referencing the original analysis.',
                         default=None, nargs='+')
     parser.add_argument(
-        '--output', dest='output', help='A path to an output file, defaulted to standard out if not included.')
+        '--output', dest='output', help='A path to an output file, defaulted to stdout if not included.')
     args = parser.parse_args()
     return args
 
@@ -171,7 +171,7 @@ def main():
         response = api.pcap_download(args.pcap_id)
         retries = 5
         while response.status_code != 200 and retries > 0:
-            print('{} analysis package is generating. Please wait.'.format(args.pcap_id))
+            print('Generating {} analysis package...'.format(args.pcap_id))
             time.sleep(5)
             response = api.pcap_download(args.pcap_id)
             retries -= 1
