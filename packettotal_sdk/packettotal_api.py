@@ -12,7 +12,7 @@ class PacketTotalApi:
     """
     Client that provides search/analysis capabilities
 
-    Signup here: https://www.packettotal.com/api.html
+    Sign up here: https://www.packettotal.com/api.html
     """
 
     def __init__(self, api_key: str):

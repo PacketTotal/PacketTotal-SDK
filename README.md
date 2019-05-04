@@ -59,7 +59,7 @@ print(response.status_code, response.json())
 ##### Via packettotal commandline
 
 ```bash
-packettotal analyze --path /path/to/my/pcap.pcap --name my-publically-shared-pcap.pcap
+packettotal analyze --path /path/to/my/pcap.pcap --name my-publicly-shared-pcap-name
 ```
 
 
@@ -69,7 +69,7 @@ from packettotal_sdk import packettotal_api
 
 api = packettotal_api.PacketTotalApi('my-api-key')
 
-response = api.analyze(open('/path/to/my/pcap.pcap', 'rb'), pcap_name='my-publically-shared-pcap.pcap')
+response = api.analyze(open('/path/to/my/pcap.pcap', 'rb'), pcap_name='my-publicly-shared-pcap-name')
 
 print(response.status_code, response.json())
 
