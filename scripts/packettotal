@@ -78,7 +78,7 @@ def _output_text_response(response: requests.Response, output_file=None) -> None
             f.write(response.text)
 
 
-def _output_binary_response(response: requests.Response, pcap_id: str):
+def _output_binary_response(response: requests.Response, pcap_id: str) -> None:
     """
     Write a binary response to a zip file, or display an error
 
@@ -96,11 +96,11 @@ def _output_binary_response(response: requests.Response, pcap_id: str):
             f.write(response.content)
 
 
-def _parse_cmdline():
+def _parse_cmdline() -> argparse.Namespace:
     """
     positional arguments:
-    mode                  The mode to invoke [ analyze|search|deep_search_create
-                        |deep_search_get|info|analysis|download|similar ]
+    mode                  The mode to invoke [ analyze|search|deep_search
+                        |deep_search_results|info|analysis|download|similar ]
 
     optional arguments:
       -h, --help            show this help message and exit
@@ -121,17 +121,17 @@ def _parse_cmdline():
     )
     parser.add_argument('mode', metavar='mode', type=str,
                         help='The mode to invoke '
-                             '[ analyze|search|deep_search_create|deep_search_get|info|analysis|'
+                             '[ analyze|search|deep_search|deep_search_results|info|analysis|'
                              'download|similar ]')
     parser.add_argument(
         '--query', dest='query', help='A search query',
-        required='search' in sys.argv or 'deep_search_create' in sys.argv)
+        required='search' in sys.argv or 'deep_search' in sys.argv)
     parser.add_argument(
         '--pcap-id', dest='pcap_id', help='The MD5 hash of some PCAP file.',
         required='analysis' in sys.argv or 'download' in sys.argv or 'info' in sys.argv or 'similar' in sys.argv)
     parser.add_argument(
         '--search-id', dest='search_id', help='The search identifier corresponding to a deep search task',
-        required='deep_search_get' in sys.argv)
+        required='deep_search_results' in sys.argv)
     parser.add_argument(
         '--path', dest='pcap_path', help='The path to the pcap file you wish to analyze.',
         required='analyze' in sys.argv)
@@ -155,12 +155,13 @@ def main():
             pcap_sources = args.pcap_sources
         else:
             pcap_sources = None
-        _output_text_response(api.analyze(open(args.pcap_path, 'rb'), pcap_name=args.pcap_name, pcap_sources=pcap_sources))
+        _output_text_response(api.analyze(open(args.pcap_path, 'rb'), pcap_name=args.pcap_name,
+                                          pcap_sources=pcap_sources))
     elif args.mode == 'search':
         _output_text_response(api.search(args.query), args.output)
-    elif args.mode == 'deep_search_create':
+    elif args.mode == 'deep_search':
         _output_text_response(api.deep_search_create(args.query), args.output)
-    elif args.mode == 'deep_search_get':
+    elif args.mode == 'deep_search_results':
         _output_text_response(api.deep_search_get(args.search_id), args.output)
     elif args.mode == 'info':
         _output_text_response(api.pcap_info(args.pcap_id), args.output)
@@ -183,7 +184,7 @@ def main():
     elif args.mode == 'usage':
         _output_text_response(api.usage(), args.output)
     else:
-        print('Invalid mode. Valid modes are: [{}]'.format('analyze|search|deep_search_create|deep_search_get|'
+        print('Invalid mode. Valid modes are: [{}]'.format('analyze|search|deep_search|deep_search_results|'
                                                            'info|analysis|download|similar'),
               file=sys.stderr)
 
