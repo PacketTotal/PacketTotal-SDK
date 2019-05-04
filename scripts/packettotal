@@ -83,7 +83,7 @@ def _output_binary_response(response: requests.Response, pcap_id: str):
     Write a binary response to a zip file, or display an error
 
     :param response: A request.Response instance containing a populated .content variable
-    :param pcap_id: An md5 hash corresponding to the PCAP file submission on PacketTotal.com
+    :param pcap_id: An md5 hash corresponding to the pcap file submission on PacketTotal.com
     """
     if response.status_code not in [200, 301]:
         print('An error occurred. [{}]'.format(response.status_code), file=sys.stderr)
@@ -105,7 +105,7 @@ def _parse_cmdline():
     optional arguments:
       -h, --help            show this help message and exit
       --query QUERY         A search query
-      --pcap-id PCAP_ID     The MD5 hash of some PCAP file.
+      --pcap-id PCAP_ID     The MD5 hash of some pcap file on PacketTotal.
       --search-id SEARCH_ID
                             The search identifier corresponding to a deep search
                             task
@@ -127,7 +127,7 @@ def _parse_cmdline():
         '--query', dest='query', help='Your search query.',
         required='search' in sys.argv or 'deep_search_create' in sys.argv)
     parser.add_argument(
-        '--pcap-id', dest='pcap_id', help='The MD5 hash of the PCAP on PacketTotal.',
+        '--pcap-id', dest='pcap_id', help='The MD5 hash of the pcap on PacketTotal.',
         required='analysis' in sys.argv or 'download' in sys.argv or 'info' in sys.argv or 'similar' in sys.argv)
     parser.add_argument(
         '--search-id', dest='search_id', help='The search identifier corresponding to a deep search task.',

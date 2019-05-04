@@ -54,7 +54,7 @@ print(response.status_code, response.json())
 
 ```
 
-### Analyze a PCAP file
+### Analyze a pcap file
 
 ##### Via packettotal commandline
 
