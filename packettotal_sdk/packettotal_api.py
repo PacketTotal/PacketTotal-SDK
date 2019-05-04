@@ -31,7 +31,7 @@ class PacketTotalApi:
 
     def analyze(self, pcap_file_obj: typing.BinaryIO, pcap_name=None, pcap_sources=None) -> requests.Response:
         """
-        Publically analyze a PCAP file
+        Publicly analyze a PCAP file
 
         :param pcap_file_obj: A file like object that provides a .read() interface (E.G open('path_to_pcap.pcap, 'rb') )
         :param pcap_name: The optional name of the pcap file, if none is given the md5 hash of the PCAP is used
@@ -116,21 +116,6 @@ class PacketTotalApi:
 
         return response.text
 
-    def pcap_info(self, pcap_md5: str) -> requests.Response:
-        """
-        Get high-level information about a specific PCAP file.
-        https://www.packettotal.com/api-docs/#/pcaps/get_pcaps__pcap_id_
-
-        :param pcap_md5: An md5 hash corresponding to the PCAP file submission on PacketTotal.com
-        :return: A request.Response instance, containing high-level metadata about a PCAP submission
-        """
-        response = requests.get(
-            self.base_url + self.version + '/pcaps/{0}'.format(pcap_md5),
-            headers=self.headers
-        )
-
-        return response
-
     def pcap_analysis(self, pcap_md5: str) -> requests.Response:
         """
         Get a detailed report of PCAP traffic, carved files, signatures, and top-talkers.
@@ -162,8 +147,23 @@ class PacketTotalApi:
 
         return response
 
+    def pcap_info(self, pcap_md5: str) -> requests.Response:
+        """
+        Get high-level information about a specific PCAP file.
+        https://www.packettotal.com/api-docs/#/pcaps/get_pcaps__pcap_id_
+
+        :param pcap_md5: An md5 hash corresponding to the PCAP file submission on PacketTotal.com
+        :return: A request.Response instance, containing high-level metadata about a PCAP submission
+        """
+        response = requests.get(
+            self.base_url + self.version + '/pcaps/{0}'.format(pcap_md5),
+            headers=self.headers
+        )
+
+        return response
+
     def pcap_similar(self, pcap_md5: str, intensity='low', weighting_mode='behavior',
-                prioritize_uncommon_fields=False, pretty=False) -> requests.Response:
+                     prioritize_uncommon_fields=False, pretty=False) -> requests.Response:
         """
         Get a similarity graph relative to the current PCAP file.
         https://www.packettotal.com/api-docs/#/pcaps/get_pcaps__pcap_id__similar
