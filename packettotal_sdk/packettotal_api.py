@@ -50,7 +50,6 @@ class PacketTotalApi:
             body['pcap_name'] = pcap_name
 
         if isinstance(pcap_sources, list):
-            print(type(pcap_sources), pcap_sources)
             body['sources'] = pcap_sources
 
         response = requests.post(
