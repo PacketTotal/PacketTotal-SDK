@@ -6,7 +6,7 @@ import getpass
 import argparse
 
 import requests
-from packettotal_sdk import packettotal_api
+from packettotal_sdk import search_tools
 
 
 def _output_text_response(response: requests.Response, output_file=None) -> None:
@@ -36,7 +36,7 @@ def _output_binary_response(response: requests.Response, pcap_id: str) -> None:
     :param response: A request.Response instance containing a populated .content variable
     :param pcap_id: An md5 hash corresponding to the pcap file submission on PacketTotal.com
     """
-    if response.status_code not in [200, 301]:
+    if response.status_code not in [200, 303]:
         print('An error occurred. [{}]'.format(response.status_code), file=sys.stderr)
         print(response.text, file=sys.stderr)
     elif response.status_code == 202:
@@ -50,8 +50,8 @@ def _output_binary_response(response: requests.Response, pcap_id: str) -> None:
 def _parse_cmdline() -> argparse.Namespace:
     """
     positional arguments:
-    mode                  The mode to invoke [ analyze|search|deep_search
-                        |deep_search_results|info|analysis|download|similar ]
+    mode                 The mode to invoke [ analyze|search|search_by_pcap|ioc_search|deep_search
+                        |deep_search_results|info|analysis|download|similar| ]
 
     optional arguments:
       -h, --help            show this help message and exit
@@ -72,8 +72,8 @@ def _parse_cmdline() -> argparse.Namespace:
     )
     parser.add_argument('mode', metavar='mode', type=str,
                         help='The mode to invoke '
-                             '[ analyze|search|deep_search|deep_search_results|info|analysis|'
-                             'download|similar ]')
+                             '[ analyze|search|search_by_pcap|ioc_search|deep_search|deep_search_results|info|analysis|'
+                             'download|similar|]')
     parser.add_argument(
         '--query', dest='query', help='A search query',
         required='search' in sys.argv or 'deep_search' in sys.argv)
@@ -85,7 +85,11 @@ def _parse_cmdline() -> argparse.Namespace:
         required='deep_search_results' in sys.argv)
     parser.add_argument(
         '--path', dest='pcap_path', help='The path to the pcap file you wish to analyze.',
-        required='analyze' in sys.argv)
+        required='analyze' in sys.argv or 'search_by_pcap' in sys.argv)
+    parser.add_argument('--ioc-path', dest='ioc_path', help='The path to a newline delimited text file containing '
+                                                            'search terms.', required='ioc_search' in sys.argv)
+    parser.add_argument('--skip-warnings', dest='skip_warnings', help='Skip pcap analyze warning prompt',
+                        action='store_true')
     parser.add_argument('--name', dest='pcap_name', help='The optional name associated with the pcap analysis.',
                         default=None)
     parser.add_argument('--sources', dest='pcap_sources', help='URLs referencing the original analysis.',
@@ -96,14 +100,14 @@ def _parse_cmdline() -> argparse.Namespace:
     return args
 
 
-def get_api() -> packettotal_api.PacketTotalApi:
+def get_api() -> search_tools.SearchTools:
     """
     Gets an authenticated API instance either by prompting the user or retrieving credential from disk
     :return: Returns a validated packettotal_api.PacketTotalApi instance
     """
     try:
         with open('.pt_api_key', 'r') as f:
-            api = packettotal_api.PacketTotalApi(f.read())
+            api = search_tools.SearchTools(f.read())
             if not validate_api_key(api):
                 api = prompt_api_token()
     except FileNotFoundError:
@@ -111,17 +115,41 @@ def get_api() -> packettotal_api.PacketTotalApi:
     return api
 
 
-def prompt_api_token() -> packettotal_api.PacketTotalApi:
+def prompt_analysis_disclaimer():
+    print("""
+        WARNING: Analysis will result in the network traffic becoming public at https://packettotal.com.
+
+        ADVERTENCIA: El análisis hará que el tráfico de la red se haga público en https://packettotal.com.
+
+        WARNUNG: Die Analyse führt dazu, dass der Netzwerkverkehr unter https://packettotal.com öffentlich wird.
+
+        ПРЕДУПРЕЖДЕНИЕ. Анализ приведет к тому, что сетевой трафик станет общедоступным на https://packettotal.com.
+
+        चेतावनी: विश्लेषण का परिणाम नेटवर्क ट्रैफिक https://packettotal.com पर सार्वजनिक हो जाएगा
+
+        警告：分析将导致网络流量在https://packettotal.com上公开
+
+        警告：分析により、ネットワークトラフィックはhttps://packettotal.comで公開されます。
+
+        tahdhir: sayuadiy altahlil 'iilaa 'an tusbih harakat murur alshabakat eamat ealaa https://packettotal.com
+    """)
+
+    answer = input('Continue? [Y/n]: ')
+    if answer.lower() == 'n':
+        exit(0)
+
+
+def prompt_api_token() -> search_tools.SearchTools:
     """
     Prompts the user to enter their API key, tests the validity of the key, and if valid caches it to disk
 
-    :return: Returns a validated packettotal_api.PacketTotalApi instance
+    :return: Returns a validated search_tools.SearchTools instance
     """
     valid = False
     api = None
     while not valid:
         api_key = getpass.getpass('Enter your API key: ', stream=None)
-        api = packettotal_api.PacketTotalApi(api_key)
+        api = search_tools.SearchTools(api_key)
         if validate_api_key(api):
             with open('.pt_api_key', 'w') as f:
                 f.write(api_key)
@@ -129,11 +157,11 @@ def prompt_api_token() -> packettotal_api.PacketTotalApi:
     return api
 
 
-def validate_api_key(api: packettotal_api.PacketTotalApi) -> bool:
+def validate_api_key(api: search_tools.SearchTools) -> bool:
     """
     Determines whether an API key is valid
 
-    :param api: An unvalidated packettotal_api.PacketTotalApi instance
+    :param api: An unvalidated search_tools.SearchTools instance
     :return: True if api key is valid
     """
     valid = False
@@ -151,6 +179,8 @@ def main():
         return
     api = get_api()
     if args.mode == 'analyze':
+        if not args.skip_warnings:
+            prompt_analysis_disclaimer()
         if args.pcap_sources:
             pcap_sources = args.pcap_sources
         else:
@@ -161,6 +191,8 @@ def main():
         _output_text_response(api.search(args.query), args.output)
     elif args.mode == 'deep_search':
         _output_text_response(api.deep_search_create(args.query), args.output)
+    elif args.mode == 'ioc_search':
+        _output_text_response(api.search_by_iocs(open(args.ioc_path, 'r')), args.output)
     elif args.mode == 'deep_search_results':
         _output_text_response(api.deep_search_get(args.search_id), args.output)
     elif args.mode == 'info':
@@ -183,6 +215,10 @@ def main():
         _output_text_response(api.pcap_similar(args.pcap_id), args.output)
     elif args.mode == 'usage':
         _output_text_response(api.usage(), args.output)
+    elif args.mode == 'search_by_pcap':
+        if not args.skip_warnings:
+            prompt_analysis_disclaimer()
+        _output_text_response(api.search_by_pcap(open(args.pcap_path, 'rb')), args.output)
     else:
         print('Invalid mode. Valid modes are: [{}]'.format('analyze|search|deep_search|deep_search_results|'
                                                            'info|analysis|download|similar'),

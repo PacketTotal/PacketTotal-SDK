@@ -83,7 +83,6 @@
             <span class="n">body</span><span class="p">[</span><span class="s1">&#39;pcap_name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pcap_name</span>
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pcap_sources</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
-            <span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">pcap_sources</span><span class="p">),</span> <span class="n">pcap_sources</span><span class="p">)</span>
             <span class="n">body</span><span class="p">[</span><span class="s1">&#39;sources&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pcap_sources</span>
 
         <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
@@ -127,7 +126,7 @@
         <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">base_url</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">version</span> <span class="o">+</span> <span class="s1">&#39;/search/deep&#39;</span><span class="p">,</span>
             <span class="n">headers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">headers</span><span class="p">,</span>
-            <span class="n">body</span><span class="o">=</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">body</span><span class="p">)</span>
+            <span class="n">data</span><span class="o">=</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">body</span><span class="p">)</span>
         <span class="p">)</span>
 
         <span class="k">return</span> <span class="n">response</span></div>
@@ -147,7 +146,7 @@
             <span class="n">headers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">headers</span>
         <span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">response</span><span class="o">.</span><span class="n">text</span></div>
+        <span class="k">return</span> <span class="n">response</span></div>
 
 <div class="viewcode-block" id="PacketTotalApi.pcap_analysis"><a class="viewcode-back" href="../../packettotal_sdk/packettotal_sdk.html#packettotal_sdk.packettotal_api.PacketTotalApi.pcap_analysis">[docs]</a>    <span class="k">def</span> <span class="nf">pcap_analysis</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pcap_md5</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">requests</span><span class="o">.</span><span class="n">Response</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>

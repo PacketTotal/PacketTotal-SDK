@@ -93,7 +93,7 @@ class PacketTotalApi:
         response = requests.post(
             self.base_url + self.version + '/search/deep',
             headers=self.headers,
-            body=json.dumps(body)
+            data=json.dumps(body)
         )
 
         return response
@@ -113,7 +113,7 @@ class PacketTotalApi:
             headers=self.headers
         )
 
-        return response.text
+        return response
 
     def pcap_analysis(self, pcap_md5: str) -> requests.Response:
         """
