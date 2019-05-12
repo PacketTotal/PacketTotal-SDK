@@ -84,17 +84,46 @@ packettotal search --query google.com
 ```
 
 
-##### Via packettotal_api module
+### Search by PCAP file
+
+##### Via packettotal commandline
+
+```bash
+packettotal search_by_pcap --path /path/to/my/pcap.pcap 
+```
+
+##### Via search_tools module
 ```python
-from packettotal_sdk import packettotal_api
+from packettotal_sdk import search_tools
 
-api = packettotal_api.PacketTotalApi('my-api-key')
+api = search_tools.SearchTools('my-api-key')
 
-response = api.search('google.com')
+response = api.search_by_pcap(open('my-public-pcap.pcap', 'rb'))
 
 print(response.status_code, response.json())
 
 ```
+
+### Search by list of IOCs
+
+##### Via packettotal commandline
+
+```bash
+packettotal ioc_search --ioc-path /path/to/my_line_delim_iocs.txt
+```
+
+##### Via search_tools module
+```python
+from packettotal_sdk import search_tools
+
+api = search_tools.SearchTools('my-api-key')
+
+response = api.search_by_iocs(open('my_line_delim_iocs.txt', 'r'))
+
+print(response.status_code, response.json())
+
+```
+
 
 ## Documentation
 
