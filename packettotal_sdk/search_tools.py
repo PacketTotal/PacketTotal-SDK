@@ -33,6 +33,8 @@ class SearchTools(packettotal_api.PacketTotalApi):
                 print('[{}] Waiting for {} to finish analyzing.'.format(datetime.utcnow(), pcap_id))
                 info_response = super().pcap_info(response.json()['id'])
                 time.sleep(10)
+            print('[{}] Fetching results for {}.'.format(datetime.utcnow(), pcap_id))
+            time.sleep(5)
             sim_response = super().pcap_similar(response.json()['id'])
         else:
             return response
