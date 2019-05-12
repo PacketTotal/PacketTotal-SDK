@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
      name='packettotal_sdk',
-     version='0.1',
+     version='0.2',
      scripts=['scripts/packettotal'],
      author="PacketTotal, LLC.",
      author_email="admin@packettotal.com",
