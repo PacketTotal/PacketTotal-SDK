@@ -42,7 +42,7 @@ class SearchTools(packettotal_api.PacketTotalApi):
 
     def search_by_iocs(self, ioc_file: typing.TextIO) -> requests.Response:
         """
-        Search up to 1000 IOC terms at once, and get matching packet captures
+        Search up to 100 IOC terms at once, and get matching packet captures
 
         :param ioc_file: A file like object that provides a .read() interface (E.G open('path_to_iocs.txt, 'r')
                          contents are line delim
@@ -62,8 +62,8 @@ class SearchTools(packettotal_api.PacketTotalApi):
         search_str = ''
         for i, ioc in enumerate(text_delimd[0: -2]):
             search_str += '"{}" OR '.format(ioc.strip())
-            if i > 1000:
-                print('Warning searching only the first 1000 IOC terms of {}.'.format(len(text_delimd)), file=stderr)
+            if i > 100:
+                print('Warning searching only the first 100 IOC terms of {}.'.format(len(text_delimd)), file=stderr)
                 break
         search_str += '"{}"'.format(text_delimd[-1].strip())
         response = super().search(search_str)
